@@ -6,7 +6,7 @@ Rendering Pipeline er röðinn sem hlutirnir gerast í WebGL. Það byrjar þann
 lit. Síðan er þetta testað og veryfiað og svo birtist það á skjánum e. FrameBuffer.  
 */
 
-
+//bý til vertex skugga sem teiknar grunnin af þríhyrningnum.
 var vertexShaderText = 
 [
 'precision mediump float;',
@@ -24,7 +24,7 @@ var vertexShaderText =
 '  gl_Position = mProj * mView * mWorld *vec4(vertPosition, 1.0);',
 '}'
 ].join('\n');
-
+//bý til skugga sem er notaður til að lita inn pixlana sem eru í þríhyrningnum
 var fragmentShaderText =
 [
 'precision mediump float;',
@@ -35,10 +35,10 @@ var fragmentShaderText =
 '  gl_FragColor = vec4(fragColor, 1.0);',
 '}'
 ].join('\n');
-
+//hér bryjar ballið
 var InitDemo = function () {
 	console.log('This is working');
-
+	//tengi við html
 	var canvas = document.getElementById('triangle');
 	var gl = canvas.getContext('webgl');
 
@@ -50,19 +50,19 @@ var InitDemo = function () {
 	if (!gl) {
 		alert('Your browser does not support WebGL');
 	}
-
+	//set upp liti
 	gl.clearColor(0.75, 0.85, 0.8, 1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 	//
-	// Create shaders
+	// by til skugga
 	// 
 	var vertexShader = gl.createShader(gl.VERTEX_SHADER);
 	var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 
 	gl.shaderSource(vertexShader, vertexShaderText);
 	gl.shaderSource(fragmentShader, fragmentShaderText);
-
+	//errorar ef einhvað myndi ekki virka
 	gl.compileShader(vertexShader);
 	if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
 		console.error('ERROR compiling vertex shader!', gl.getShaderInfoLog(vertexShader));
@@ -74,7 +74,7 @@ var InitDemo = function () {
 		console.error('ERROR compiling fragment shader!', gl.getShaderInfoLog(fragmentShader));
 		return;
 	}
-
+	//geri forritið og tengi það við skuggana
 	var program = gl.createProgram();
 	gl.attachShader(program, vertexShader);
 	gl.attachShader(program, fragmentShader);
@@ -89,16 +89,14 @@ var InitDemo = function () {
 		return;
 	}
 
-	//
-	// Create buffer
-	//
+	//þrýhirningur(buffer) teiknaður og gefinn litur
 	var triangleVertices = 
 	[ // X, Y, Z       	  R, G, B
 		0.0, 0.5, 0.0,    1.0, 1.0, 0.0,
 		-0.5, -0.5, 0.0,  0.7, 0.0, 1.0,
 		0.5, -0.5, 0.0,   0.1, 1.0, 0.6
 	];
-
+	
 	var triangleVertexBufferObject = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
@@ -127,7 +125,7 @@ var InitDemo = function () {
 
 
 	gl.useProgram(program);
-
+	//set upp 3d heim þannig að það sé hægt að animate-a þríhyrninginn.
 	var matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
 	var matViewUniformLocation = gl.getUniformLocation(program, 'mView');
 	var matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
@@ -150,6 +148,7 @@ var InitDemo = function () {
 	var identityMatrix = new Float32Array(16);
 	glMatrix.mat4.identity(identityMatrix);
 	var angle = 0;
+	//þríhyrningur byrjar að snúast með aniamation
 	var loop = function(){
 		angle = performance.now() / 1000 / 6 * 2 * Math.PI;
 		glMatrix.mat4.rotate(worldMatrix, identityMatrix, angle, [0, 1, 0]);
